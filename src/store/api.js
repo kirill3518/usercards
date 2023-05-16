@@ -15,11 +15,16 @@ const baseQueryWithReauth = async (
 ) => {
     await mutex.waitForUnlock()
 
+    const loginState = api.getState().login
+
     const getResult = async () => {
         switch (args.url) {
-            case '/login':
             case '/register':
                 return baseQuery(args, api, extraOptions)
+
+            case '/login':
+                return baseQuery(args, api, extraOptions)
+
             default:
                 return baseQuery(
                     {
@@ -76,18 +81,18 @@ export const api = createApi({
     tagTypes: ['Users', 'User'],
 
     endpoints: (builder) => ({
+        registration: builder.mutation({
+            query: (dataNewUser) => ({
+                url: '/login',
+                method: 'POST',
+                body: dataNewUser,
+            }),
+        }),
         login: builder.mutation({
             query: (credentials) => ({
                 url: '/login',
                 method: 'POST',
                 body: credentials,
-            }),
-        }),
-        registration: builder.mutation({
-            query: (dataNewUser) => ({
-                url: '/register',
-                method: 'POST',
-                body: dataNewUser,
             }),
         }),
         updateUser: builder.mutation({
@@ -102,9 +107,9 @@ export const api = createApi({
             ),
         }),
 
-        getUsers: builder.query({
-            query: () => ({
-                url: '/users',
+        getPageById: builder.query({
+            query: (pageId) => ({
+                url: `/users?page=${pageId}`,
                 method: 'GET',
             }),
 
@@ -116,16 +121,16 @@ export const api = createApi({
                 method: 'GET',
             }),
 
-            providesTags: ['User'],
+            providesTags: ['Users'],
         }),
     }),
 })
 
 export const {
     endpoints,
-    useLoginMutation,
     useRegistrationMutation,
+    useLoginMutation,
     useUpdateUserMutation,
-    useGetUsersQuery,
+    useGetPageByIdQuery,
     useGetUserByIdQuery,
 } = api

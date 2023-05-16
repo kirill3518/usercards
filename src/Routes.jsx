@@ -6,6 +6,7 @@ import {
 import {
     MainPage,
     LoginPage,
+    RegistrationPage,
     UserPage,
     NotFoundPage,
 } from './pages'
@@ -17,8 +18,16 @@ export const Routes = () => (
             element={<MainPage />}
         />
         <Route
+            path='/pages/:id'
+            element={<MainPage />}
+        />
+        <Route
             path='/login'
             element={<LoginPage />}
+        />
+        <Route
+            path='/registration'
+            element={<RegistrationPage />}
         />
         <Route
             path='/users/:id'
